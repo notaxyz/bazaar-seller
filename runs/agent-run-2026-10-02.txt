@@ -1,0 +1,304 @@
+
+> bazaar-seller@0.1.0 agent
+> tsx scripts/agent-demo.ts 0xaf88d065e77c8cC2239327C5EDb3A432268e5831
+
+1. GET http://localhost:3002/discovery/resources?type=http
+   1 of 1 resources
+   - http://localhost:3100/analyze  (250000 eip155:421614, updated 2026-10-02T10:39:41.889Z)
+2. Found Nota Contract Intel
+   Risk and control analysis of an Arbitrum One smart contract: proxy status and implementation, verified source, owner and admin accounts with their powers, ERC-20 approval activity, recent transaction summary, and risk flags. Undetermined fields are reported as such, never guessed.
+   declared input: GET {"address":"0xaf88d065e77c8cC2239327C5EDb3A432268e5831"}
+3. GET http://localhost:3100/analyze?address=0xaf88d065e77c8cC2239327C5EDb3A432268e5831 as 0x2Ec0888751f2F82a12F60a638A73780e2D70f5f8
+   status 200
+   settlement: {
+  "success": true,
+  "payer": "0x2Ec0888751f2F82a12F60a638A73780e2D70f5f8",
+  "transaction": "0x0e77cb9f69cb511fbdf25c368230f4344703eea412537333fa74aecaa12fc5d7",
+  "network": "eip155:421614",
+  "amount": "250000",
+  "extra": {
+    "merchantAddress": "0xF2E63f2339141A317e0f446Bf1d81593aBc5D557",
+    "forward": {
+      "status": "complete",
+      "transaction": "0xc02b42ba1e39d622fdaedbf79a2fdbd2913d6ab7161947a72f252d7aa8dde7e1"
+    },
+    "feeBreakdown": {
+      "merchantAmount": "149253",
+      "serviceFee": "747",
+      "gasFee": "100000",
+      "totalAmount": "250000"
+    }
+  }
+}
+4. analysis:
+{
+  "activity": {
+    "ageDays": 1431,
+    "creationTimestamp": "2022-10-31T20:42:12.000Z",
+    "creationTxHash": "0xec773df8d80c83b23c74d0368f63d095f040c5fc6f9e749d0b429a7410c62662",
+    "creator": "0x75237625cc7bDf0739cBb139b06484E05eEE7878",
+    "determined": true,
+    "distinctSendersInSample": 63,
+    "ethBalanceWei": "0",
+    "failedTxInSample": 0,
+    "firstSampledTx": "2026-10-02T10:39:03.000Z",
+    "lastSampledTx": "2026-10-02T10:39:53.000Z",
+    "recentLogsScanned": null,
+    "sampleSize": 100,
+    "topFunctions": [
+      {
+        "calls": 94,
+        "name": "transfer",
+        "selector": "0xa9059cbb"
+      },
+      {
+        "calls": 3,
+        "name": "approve",
+        "selector": "0x095ea7b3"
+      },
+      {
+        "calls": 2,
+        "name": "permit",
+        "selector": "0xd505accf"
+      },
+      {
+        "calls": 1,
+        "name": "transferWithAuthorization",
+        "selector": "0xe3ee160e"
+      }
+    ]
+  },
+  "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  "analyzedAt": "2026-10-02T10:39:52.143Z",
+  "approvals": {
+    "applicable": true,
+    "determined": true,
+    "distinctSpenders": 435,
+    "fromBlock": "510939090",
+    "toBlock": "510959089",
+    "topSpenders": [
+      {
+        "approvals": 513,
+        "spender": "0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7",
+        "spenderKind": "contract",
+        "unlimitedApprovals": 0
+      },
+      {
+        "approvals": 425,
+        "spender": "0x0d9D44B6D55f0413C9fD168E78e9e2AAB794bfBd",
+        "spenderKind": "contract",
+        "unlimitedApprovals": 0
+      },
+      {
+        "approvals": 178,
+        "spender": "0x4cD00E387622C35bDDB9b4c962C136462338BC31",
+        "spenderKind": "contract",
+        "unlimitedApprovals": 0
+      },
+      {
+        "approvals": 156,
+        "spender": "0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d",
+        "spenderKind": "contract",
+        "unlimitedApprovals": 2
+      },
+      {
+        "approvals": 129,
+        "spender": "0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE",
+        "spenderKind": "contract",
+        "unlimitedApprovals": 5
+      }
+    ],
+    "totalApprovals": 3693,
+    "unlimitedApprovals": 263
+  },
+  "bytecodeSize": 1852,
+  "chainId": 42161,
+  "control": {
+    "accounts": [
+      {
+        "address": "0xc7a599037fDa4Ff8029df9a042Af6053d061ebc9",
+        "kind": "eoa",
+        "role": "owner",
+        "source": "owner()"
+      },
+      {
+        "address": "0x2E0A67588cfBCAD40f9e4DD76052436190A77a68",
+        "kind": "eoa",
+        "role": "proxyAdmin",
+        "source": "zeppelinos admin slot"
+      }
+    ],
+    "determined": true,
+    "ownershipRenounced": false,
+    "pausable": true,
+    "paused": false,
+    "privilegedFunctions": [
+      {
+        "category": "config",
+        "name": "updateMasterMinter",
+        "signature": "updateMasterMinter(address)"
+      },
+      {
+        "category": "config",
+        "name": "updatePauser",
+        "signature": "updatePauser(address)"
+      },
+      {
+        "category": "config",
+        "name": "updateRescuer",
+        "signature": "updateRescuer(address)"
+      },
+      {
+        "category": "funds",
+        "name": "rescueERC20",
+        "signature": "rescueERC20(address,address,uint256)"
+      },
+      {
+        "category": "ownership",
+        "name": "transferOwnership",
+        "signature": "transferOwnership(address)"
+      },
+      {
+        "category": "pause",
+        "name": "pause",
+        "signature": "pause()"
+      },
+      {
+        "category": "pause",
+        "name": "unpause",
+        "signature": "unpause()"
+      },
+      {
+        "category": "restriction",
+        "name": "blacklist",
+        "signature": "blacklist(address)"
+      },
+      {
+        "category": "restriction",
+        "name": "unBlacklist",
+        "signature": "unBlacklist(address)"
+      },
+      {
+        "category": "restriction",
+        "name": "updateBlacklister",
+        "signature": "updateBlacklister(address)"
+      },
+      {
+        "category": "supply",
+        "name": "configureMinter",
+        "signature": "configureMinter(address,uint256)"
+      },
+      {
+        "category": "supply",
+        "name": "mint",
+        "signature": "mint(address,uint256)"
+      },
+      {
+        "category": "supply",
+        "name": "removeMinter",
+        "signature": "removeMinter(address)"
+      }
+    ],
+    "upgradeable": true
+  },
+  "dataSources": [
+    "rpc:arb1.arbitrum.io",
+    "arbiscan (etherscan v2 api, chainid 42161)"
+  ],
+  "isContract": true,
+  "network": "eip155:42161",
+  "proxy": {
+    "admin": "0x2E0A67588cfBCAD40f9e4DD76052436190A77a68",
+    "beacon": null,
+    "determined": true,
+    "implementation": "0x86E721b43d4ECFa71119Dd38c0f938A75Fdb57B3",
+    "isProxy": true,
+    "pattern": "zeppelinos"
+  },
+  "riskFlags": [
+    {
+      "code": "UPGRADEABLE",
+      "evidence": "zeppelinos proxy; admin 0x2E0A67588cfBCAD40f9e4DD76052436190A77a68 can change the implementation",
+      "severity": "medium",
+      "title": "Contract logic can be replaced"
+    },
+    {
+      "code": "ADMIN_IS_EOA",
+      "evidence": "0x2E0A67588cfBCAD40f9e4DD76052436190A77a68 holds no code; one private key can upgrade the contract",
+      "severity": "high",
+      "title": "Proxy admin is a single externally owned account"
+    },
+    {
+      "code": "OWNER_IS_EOA",
+      "evidence": "0xc7a599037fDa4Ff8029df9a042Af6053d061ebc9 holds no code; ABI exposes config, funds, ownership, pause, restriction, supply functions",
+      "severity": "medium",
+      "title": "Owner is a single externally owned account"
+    },
+    {
+      "code": "PAUSABLE",
+      "evidence": "exposes paused(); a privileged account can halt it",
+      "severity": "low",
+      "title": "Contract can be paused"
+    },
+    {
+      "code": "SUPPLY_CONTROL",
+      "evidence": "ABI includes configureMinter, mint, removeMinter",
+      "severity": "medium",
+      "title": "Privileged supply functions present"
+    },
+    {
+      "code": "TRANSFER_RESTRICTIONS",
+      "evidence": "ABI includes blacklist, unBlacklist, updateBlacklister",
+      "severity": "medium",
+      "title": "Accounts can be restricted or frozen"
+    },
+    {
+      "code": "FUNDS_WITHDRAWAL",
+      "evidence": "ABI includes rescueERC20",
+      "severity": "low",
+      "title": "Privileged withdrawal or rescue functions present"
+    }
+  ],
+  "source": {
+    "compilerVersion": "v0.6.12+commit.27d51765",
+    "contractName": "FiatTokenProxy",
+    "determined": true,
+    "implementationContractName": "FiatTokenV2_2",
+    "implementationVerified": true,
+    "license": null,
+    "optimizationUsed": true,
+    "verified": true
+  },
+  "token": {
+    "decimals": 6,
+    "determined": true,
+    "isErc20": true,
+    "name": "USD Coin",
+    "symbol": "USDC",
+    "totalSupply": "2707188516.72748"
+  },
+  "undetermined": []
+}
+5. purchaseRef 0x693c1edeea8a33165894cee4889773da7e3ef62f3aa681f1e0ba4c996665f02a (store 0x6b13e2077c84e1326111acBbb618E028723e2EA2, chain 421614)
+   4995 response bytes saved to .nota/received/0x693c1edeea8a33165894cee4889773da7e3ef62f3aa681f1e0ba4c996665f02a.json
+   waiting for ReceiptAttested on 0x6b13e2077c84e1326111acBbb618E028723e2EA2 (up to 120s)
+   landed in block 314955961: https://sepolia.arbiscan.io/tx/0x2ec3f8e313fa6bb9bc4f9392994759d0a5f88a743d8cd60bba65489aa67783df
+6. verify 0x693c1edeea8a33165894cee4889773da7e3ef62f3aa681f1e0ba4c996665f02a against seller 0xF2E63f2339141A317e0f446Bf1d81593aBc5D557
+  [PASS] 0. logs filtered to the deployment-record store
+         store 0x6b13e2077c84e1326111acBbb618E028723e2EA2 on chain 421614, from notaxyz/contracts deployments/arbitrum-sepolia-attest.json
+         RPC chain id: 421614
+  [PASS] 1. ReceiptAttested log exists for purchaseRef
+         receiptId 3 in block 314955961, tx 0x2ec3f8e313fa6bb9bc4f9392994759d0a5f88a743d8cd60bba65489aa67783df
+  [PASS] 2. seller is the expected seller
+         log seller 0xF2E63f2339141A317e0f446Bf1d81593aBc5D557
+  [PASS] 3. listingId belongs to that seller
+         listingId 1
+         getListing(1).seller = 0xF2E63f2339141A317e0f446Bf1d81593aBc5D557
+  [PASS] 4. metadataHash matches the bytes received
+         on-chain metadataHash   0x009331170e8cd6278e78a1612c6edcf0e4d8d7ab47cd644c2f8b887c9637ee89
+         keccak256(received bytes) 0x009331170e8cd6278e78a1612c6edcf0e4d8d7ab47cd644c2f8b887c9637ee89  (4995 bytes)
+  [INFO] 5. paymentRef
+         paymentRef 0x0e77cb9f69cb511fbdf25c368230f4344703eea412537333fa74aecaa12fc5d7
+         not unique and never a lookup key; seller-chosen, not evidence of payment
+         followed on chain 421614: tx status success, block 314955945, from 0x70c2ff74596e69974cc207183f241a573201ac14
+  RESULT: PASS. The seller committed on-chain to exactly these bytes.
