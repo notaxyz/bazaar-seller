@@ -12,7 +12,8 @@
     "check": "tsc --noEmit",
     "analyze": "tsx scripts/analyze-local.ts",
     "pay": "tsx scripts/pay-once.ts",
-    "agent": "tsx scripts/agent-demo.ts"
+    "agent": "tsx scripts/agent-demo.ts",
+    "verify": "tsx scripts/verify-receipt.ts"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -24,6 +25,7 @@
     "@x402/express": "^2.27.0",
     "@x402/extensions": "^2.27.0",
     "@x402/fetch": "^2.27.0",
+    "canonicalize": "^5.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "viem": "^2.37.9",

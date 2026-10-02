@@ -6,6 +6,7 @@ import { paymentConfig } from './paymentConfig.js';
 import { analyzeDiscoveryExtension, EXAMPLE_ADDRESS } from './discovery.js';
 import { analyzeContract, AnalysisError } from './analysis/analyze.js';
 import { isArbiscanConfigured } from './analysis/arbiscan.js';
+import { NotaSeller, canonicalJson } from './nota/index.js';
 
 // Fee split model: buyers pay the facilitator signer, which forwards our share to the
 // merchant address registered for MERCHANT_API_KEY. payTo therefore comes from /supported.
@@ -60,7 +61,22 @@ const facilitatorClient = new HTTPFacilitatorClient({
   }),
 });
 
-const resourceServer = new x402ResourceServer(facilitatorClient).register(paymentConfig.network, new ExactEvmScheme());
+// Nota attestation. Startup refuses to continue unless an attestation could succeed; at request
+// time attestation is best-effort and never fails a paid call.
+const nota = new NotaSeller(paymentConfig.nota);
+try {
+  await nota.checkStartup();
+} catch (error: any) {
+  console.error(`Nota attestation is misconfigured: ${error?.shortMessage || error?.message || error}`);
+  process.exit(1);
+}
+
+// @x402/express buffers the handler's response, calls the facilitator's /settle, runs afterSettle
+// hooks with the settle result (including the settlement transaction hash), and only then flushes
+// the buffered body to the buyer.
+const resourceServer = new x402ResourceServer(facilitatorClient)
+  .register(paymentConfig.network, new ExactEvmScheme())
+  .onAfterSettle(nota.onAfterSettle);
 const payTo = await getFacilitatorPayTo();
 
 const app = express();
@@ -105,7 +121,7 @@ app.use(
   ),
 );
 
-async function handleAnalyze(req: Request, res: Response): Promise<void> {
+async function analyze(req: Request, res: Response, attest: boolean): Promise<void> {
   const address = typeof req.query.address === 'string' ? req.query.address.trim() : '';
   if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
     res.status(400).json({ error: 'invalid_address', message: 'address query parameter must be a 0x-prefixed 20-byte hex address' });
@@ -115,7 +131,17 @@ async function handleAnalyze(req: Request, res: Response): Promise<void> {
   try {
     const analysis = await analyzeContract(address);
     console.log(`[analyze] ${analysis.address} flags=${analysis.riskFlags.length} undetermined=${analysis.undetermined.length} ${Date.now() - started}ms`);
-    res.json(analysis);
+    // Serialized exactly once. This string is the body, and the attestation hashes this string.
+    const body = canonicalJson(analysis);
+    if (attest) {
+      try {
+        res.set(nota.prepareReceipt(body));
+      } catch (error: any) {
+        // The buyer is paying for the analysis, not the receipt: serve it unattested.
+        console.warn(`[nota] could not prepare a receipt; serving unattested: ${error?.message ?? error}`);
+      }
+    }
+    res.type('application/json').send(body);
   } catch (error: any) {
     if (error instanceof AnalysisError) {
       res.status(error.status).json({ error: error.status === 400 ? 'invalid_address' : 'upstream_unavailable', message: error.message });
@@ -126,13 +152,14 @@ async function handleAnalyze(req: Request, res: Response): Promise<void> {
   }
 }
 
-// Paid route. The middleware above has already verified payment; settlement happens after this responds.
-app.get('/analyze', handleAnalyze);
+// Paid route. The middleware above has already verified payment; settlement happens after this
+// responds, and the attestation is queued from the afterSettle hook.
+app.get('/analyze', (req, res) => analyze(req, res, true));
 
 // Development only: the same handler without payment, for checking analyzer output locally.
 if (process.env.ENABLE_DEBUG_ROUTE === 'true') {
   console.warn('ENABLE_DEBUG_ROUTE is set: GET /debug/analyze is served without payment');
-  app.get('/debug/analyze', handleAnalyze);
+  app.get('/debug/analyze', (req, res) => analyze(req, res, false));
 }
 
 app.listen(paymentConfig.port, () => {
@@ -142,4 +169,5 @@ app.listen(paymentConfig.port, () => {
   console.log(`payTo:        ${payTo}`);
   console.log(`Price:        $${paymentConfig.priceUsd} per GET /analyze`);
   console.log(`Arbiscan key: ${isArbiscanConfigured() ? 'configured' : 'MISSING or placeholder (source/activity fields will be undetermined)'}`);
+  console.log(`Nota:         listing ${nota.listingId} on ${nota.receiptStore} (chain ${nota.chain.id}), seller ${nota.account.address}`);
 });
